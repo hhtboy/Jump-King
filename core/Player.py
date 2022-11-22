@@ -10,7 +10,7 @@ class Player(Singleton):
         self.commandState = None
 
         #캐릭터 위치
-        self.playerSize = 50
+        self.playerSize = 30
         self.position = np.array([(240 - self.playerSize) /2, (220 - self.playerSize) , (240 + self.playerSize) / 2, (220) ], dtype=np.int64)
 
         #캐릭터가 받는 힘의 방향
@@ -40,13 +40,12 @@ class Player(Singleton):
     #상태 변화
     def update(self):
         self.defineAnim()
-        #self.bounceCheck()
-        self.checkGround()
 
     #물리 변화
     def fixedUpdate(self):
-        #self.gravity()
+        self.gravity()
         self.updateDirection()
+        self.checkGround()
         
 
     def move(self, command = None):
@@ -65,8 +64,8 @@ class Player(Singleton):
 
             if command['down_pressed']:
                 pass
-                self.position[1] += 1
-                self.position[3] += 1
+                self.position[1] += 5
+                self.position[3] += 5
 
             if command['left_pressed']:
                 if self.isJumping: return
@@ -96,7 +95,7 @@ class Player(Singleton):
 
     # 땅을 밟고 있지 않을 때, 중력을 받습니다.
     def gravity(self):
-        #if self.isJumping:
+        if self.isJumping:
             self.direction[1] += 2
 
     def walk(self):
@@ -117,22 +116,19 @@ class Player(Singleton):
     #player가 땅을 밟고 있는지 확인합니다.
     def checkGround(self):
         x,y = self.collisionCheck()
+        self.resetPos(x,y)
+        print(str(x) + " / " + str(y))
         if y <=  -1: #is ground
             self.isJumping = False
+            self.direction[0] = 0
+            self.direction[1] = 0
+            self.state = "idle"
         elif y >= 0: #is jumping
             self.isJumping = True
 
+        if x != 0: #벽 충돌로 튕겨야 함
+            self.direction[0] = -self.direction[0]
 
-
-
-    #발판을 뚫지 않게 캐릭터의 y좌표를 재설정합니다.
-    def resetYPos(self, height):
-        self.position[1] = height - self.playerSize - 1
-        self.position[3] = height - 1
-
-        self.direction[0] = 0
-        self.direction[1] = 0
-        self.state = "idle"
 
 
 
@@ -208,8 +204,6 @@ class Player(Singleton):
                 if setFlag == 1:
                     right = x + 1
 
-        print("top : "+str(top)+" / bottom : "+str(bottom) + " / left : "+str(left)+" / right : "+str(right))
-        print("player pos : "+str(self.position[1]) + " / " + str(self.position[3]) + " / " + str(self.position[0]) + " / " + str(self.position[2]))
 
         #case 나누기
         #아래 충돌
@@ -222,47 +216,105 @@ class Player(Singleton):
             while self.levelMap[rightTop][self.position[2]] == 0 and rightTop <= self.position[3]:
                 rightTop = rightTop + 1
 
-            print(leftTop, rightTop)
 
-            if leftTop < rightTop : # ⌞ 모양
-                print(" 니은 ")
+            if leftTop == top and rightTop == self.position[3] + 1: # ㅣ 모양(왼쪽)
+                print("왼쪽 일자")
                 x = self.position[0]
                 y = bottom
-                while self.levelMap[bottom][x] == 1:
+                while self.levelMap[y][x] == 1:
                     x = x + 1
                 resultX = x - self.position[0]
+                resultY = 0
 
-                while self.levelMap[y][x] == 0:
-                    y = y + 1
-                resultY = y -1 - self.position[3]
-                print("result X : "+str(resultX) + " / result Y : " + str(resultY))
+            elif rightTop == top and leftTop == self.position[3] + 1: # ㅣ 모양(오른쪽)
+                print("오른쪽 일자")
+                x = self.position[2]
+                y = bottom
+                while self.levelMap[y][x] == 1:
+                    x = x - 1
+                resultX = x - self.position[2]
+                resultY = 0
+                
+            elif leftTop < rightTop : # ⌞ 모양
+                x = self.position[0]
+                while self.levelMap[leftTop][x] == 1:
+                    x = x + 1
+                if self.levelMap[self.position[3]][x] != 0:  #끝까지 없으면 ㄴ 모양 아님
+                    
+                    print(" 니은 ")
+                    x = self.position[0]
+                    y = bottom
+                    while self.levelMap[bottom][x] == 1:
+                        x = x + 1
+                    resultX = x - self.position[0]
+
+                    while self.levelMap[y][x] == 0:
+                        y = y + 1
+                    resultY = y -1 - self.position[3]
+                else:
+                    print("절벽")
+                    y = leftTop - self.position[3] - 1
+                    x = x - 1 - self.position[0]
+                    resultY = leftTop - self.position[3] - 1
+                    if y == -1:
+                        if (self.levelMap[self.position[3]][self.position[0] + int(self.playerSize / 2) + 5] == 1) or (self.levelMap[self.position[3]][self.position[0] + int(self.playerSize / 2) - 5] == 1):
+                            resultY = -1
+                            resultX = 0
+                        else:
+                            resultY = 0
+                            resultX = x
+                        resultY = -1
+                        resultX = 0
+                    else :
+                        resultY = 0
+                        resultX = x
 
                 
             elif leftTop > rightTop : # ⌟ 모양
-                print("니은 대칭")
-                x = right
-                y = bottom
-                while self.levelMap[y][x] == 0:
-                    x = x + 1
-                resultX = x - 1 - self.position[2]
-                while self.levelMap[y][x - 1] == 0:
-                    y = y + 1
-                resultY = y -1 - self.position[3]
-                print("result X : "+str(resultX) + " / result Y : " + str(resultY))
+                x = self.position[2]
+                while self.levelMap[rightTop][x] == 1:
+                    x = x - 1
+                if self.levelMap[self.position[3]][x] != 0:
+                    print("니은 대칭")
+                    x = right
+                    y = bottom
+                    while self.levelMap[y][x] == 0:
+                        x = x + 1
+                    resultX = x - 1 - self.position[2]
+                    while self.levelMap[y][x - 1] == 0:
+                        y = y + 1
+                    resultY = y - 1 - self.position[3]
+                else:
+                    print("절벽")
+                    y = rightTop - self.position[3] - 1
+                    x = x + 1 - self.position[2]
+                    if y == -1:
+                        if (self.levelMap[self.position[3]][self.position[0] + int(self.playerSize / 2) + 5] == 1) or (self.levelMap[self.position[3]][self.position[0] + int(self.playerSize / 2) - 5] == 1):
+                            resultY = -1
+                            resultX = 0
+                        else:
+                            resultY = 0
+                            resultX = x
+
+                    else:
+                        resultY = 0
+                        resultX = x
+
+            elif leftTop == rightTop and leftTop == self.position[3] + 1: #공중
+                print("공중")
+                resultX = 0
+                resultY = 0
 
             else : # 1자 평지
                 print("일자")
                 resultX = 0
                 resultY = bottom -1 - self.position[3]
-                print("result X : "+str(resultX) + " / result Y : " + str(resultY))
         else: #천장 충돌
+            print("예외")
+            resultX = resultY = 0
             pass
 
-        self.resetPos(resultX, resultY + 1)
-
         return resultX, resultY
-
-
 
 
     #전달받은 위치만큼 player의 position을 수정합니다.
@@ -270,42 +322,13 @@ class Player(Singleton):
         self.position[0] = self.position[0] + x
         self.position[2] = self.position[2] + x
 
-        self.position[1] = self.position[1] + y
-        self.position[3] = self.position[3] + y
-        
-        
-        
-        
-    # 벽과 부딫이는지 확인합니다.
-    def bounceCheck(self):
-        for y in range(self.position[1], self.position[3]):
-            if self.facing == "left":
-                for x in range(self.position[2] - 1, self.position[0], -1):
-                    if self.levelMap[y][x] == 2:
-                        self.resetXPos(x)
-                        self.bounce()
-                    else: self.bouncing = False
-            else:
-                for x in range(self.position[0], self.position[2]):
-                    if self.levelMap[y][x] == 2:
-                        self.resetXPos(x)
-                        self.bounce()
-                    else: self.bouncing = False
+        if y == -1: return
 
-    def resetXPos(self, xPos):
-        if self.facing == "left":
-            self.position[0] = xPos
-            self.position[2] = xPos + self.playerSize
-        else :
-            self.position[2] = xPos
-            self.position[0] = xPos - self.playerSize
-                
-    def bounce(self):
-        self.bouncing = True
-        if self.isJumping:
-            self.direction[0] = - (self.direction[0])
-                
+        self.position[1] = self.position[1] + y + 1
+        self.position[3] = self.position[3] + y + 1
 
+        
+        
 
     def min(a,b):
         if a<b: return a

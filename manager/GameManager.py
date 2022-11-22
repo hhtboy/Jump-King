@@ -70,7 +70,7 @@ class GameManager(Singleton) :
             self.myDraw.rectangle((wall.x1, wall.y1, wall.x2, wall.y2),fill = (255,255,255,100))
 
         #player
-        self.background_src.paste(self.player_src, (drawPos[0] - 25, drawPos[1] - 15), self.player_src)
+        self.background_src.paste(self.player_src, (drawPos[0] - 15, drawPos[1] - 15), self.player_src)
         
         #좌표는 동그라미의 왼쪽 위, 오른쪽 아래 점 (x1, y1, x2, y2)
         self.joystick.disp.image(self.background_src)

@@ -8,11 +8,11 @@ class SourceManager:
     def importIdel(self):
         assets = []
         for src in self.idle_src:
-            assets.append(Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/"+src).resize((50,50)))
+            assets.append(Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/"+src).resize((30,30)))
         return assets
 
     def importJump(self):
         assets = []
         for src in self.jump_src:
-            assets.append(Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/"+src).resize((50,50)))
+            assets.append(Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/"+src).resize((30,30)))
         return assets

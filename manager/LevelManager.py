@@ -4,7 +4,7 @@ from mapObject.Map import Map
 
 class LevelManager(Singleton):
 
-    level_1 = [Wall(0,240,220,240), Wall(0, 60, 150, 220), Wall(220, 240, 0, 240), Wall(150, 180, 100, 120)]
+    level_1 = [Wall(0,10,0,240), Wall(0,240,220,240), Wall(0, 60, 150, 220), Wall(230, 240, 0, 240), Wall(170, 240, 180, 240)]
     level_2 = []
     level_3 = []
     level_4 = []
