@@ -1,4 +1,4 @@
-from Joystick import Joystick
+from .Joystick import Joystick
 class Controller:
     joystick = Joystick()
 

@@ -5,17 +5,18 @@ import os
 #import cv2 as cv
 import numpy as np
 from colorsys import hsv_to_rgb
-from Joystick import Joystick
-from GameManager import GameManager
+from manager.GameManager import GameManager
+from core.Player import Player
 
 def main():
-    gameManager = GameManager()
+    gameManager = GameManager.instance()
    
-
     while True:
-        
+        #상태, 가속도, 애니메이션 업데이트
         gameManager.update()
+        #위치 업데이트
         gameManager.fixedUpdate()
+        #그리기
         gameManager.draw()
 
 
