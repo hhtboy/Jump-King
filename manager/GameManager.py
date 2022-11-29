@@ -39,14 +39,9 @@ class GameManager(Singleton) :
 
     def update(self):
         command = self.inputController.getControllerInput()
+
         self.player.update()
         self.player.move(command)
-
-        # Level change
-        if self.player.center[1] < 10 :
-            LevelManager.instance().changeLevel(2)
-            self.player.position[1] = 240 - self.player.playerSize
-            self.player.position[3] = 240 + self.player.playerSize
 
             
 
