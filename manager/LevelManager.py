@@ -1,14 +1,16 @@
 from mapObject.Wall import Wall
 from core.Singleton import Singleton
 from mapObject.Map import Map
+from GameManager import GameManager
 
 class LevelManager(Singleton):
 
     level_1 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(0,240,220,240), Wall(0, 50, 140, 220), Wall(190, 240, 140, 220), Wall(90, 150, 60, 90)]
     level_2 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(200, 240, 220, 240), Wall(0,40, 220, 240), Wall(110, 160, 140, 160), Wall(50, 80, 80,100), Wall(200, 230, 50, 70) ]
-    level_3 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(10,70,190,210), Wall(100, 130, 0, 120), Wall(10, 35, 120, 140), Wall(85, 100, 40, 60) ]
-    level_4 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(100,130, 140, 240), Wall(0, 35, 160, 175), Wall(0, 40, 60, 80), Wall(160, 190, 40, 60)]
-    level_5 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(0, 40, 200, 220)]
+    level_3 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(10,70,200,220), Wall(100, 130, 0, 130), Wall(10, 40, 120, 140), Wall(85, 100, 40, 60) ]
+    level_4 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(100,130, 140, 240), Wall(0, 35, 160, 175), Wall(0, 40, 60, 80)]
+    level_5 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(70, 100, 180, 200), Wall(165,195, 170, 190), Wall(50, 80, 110, 130), Wall(200, 230, 50, 70) ]
+    level_6 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(10, 90, 195, 215), Wall(185, 230, 130, 150), Wall(10, 100, 60, 100)]
 
     def __init__(self):
         self.map = Map().map
@@ -34,10 +36,13 @@ class LevelManager(Singleton):
         elif newLevel == 5:
             self.walls = self.level_5
             print("Level : 5")
+        elif newLevel == 6:
+            self.walls = self.level_6
+            print("Level : 6")
         self.fillMap()
 
     def levelUp(self):
-        if self.level < 5:
+        if self.level < 6:
             self.changeLevel(self.level + 1)
 
     def levelDown(self):
@@ -57,3 +62,7 @@ class LevelManager(Singleton):
                     for x in range(wall.x1, wall.x2 + 1):
                         for y in range(wall.y1, wall.y2 + 1):
                             self.map[y][x] = 0
+
+    def gameOver():
+        print("gameOver")
+        GameManager.instance().gameOver = True

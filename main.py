@@ -11,7 +11,7 @@ from core.Player import Player
 def main():
     gameManager = GameManager.instance()
    
-    while True:
+    while gameManager.gameOver != True:
         #상태, 가속도, 애니메이션 업데이트
         gameManager.update()
         #위치 업데이트

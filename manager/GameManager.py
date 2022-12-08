@@ -14,6 +14,7 @@ class GameManager(Singleton) :
 
     #생성자
     def __init__(self):
+        self.gameOver = False
         self.inputController = Controller()
         self.joystick = Controller.joystick
         
@@ -32,8 +33,8 @@ class GameManager(Singleton) :
         self.player = Player.instance()
         
         #level
-        LevelManager.instance().level = 1
-        LevelManager.instance().changeLevel(1)
+        LevelManager.instance().level = 6
+        LevelManager.instance().changeLevel(6)
 
         
 
@@ -52,6 +53,7 @@ class GameManager(Singleton) :
     def draw(self):
         #그리는 순서가 중요합니다. 배경을 먼저 깔고 위에 그림을 그리고 싶었는데 그림을 그려놓고 배경으로 덮는 결과로 될 수 있습니다.
         self.player_src = self.player.animState
+        self.dust_src = self.player.anim_dust[self.player.anim_dustCount]
         #방향 전환
         if self.player.facing == "left": self.player_src = self.player_src.transpose(Image.FLIP_LEFT_RIGHT)
         drawPos = list(map((int), ((self.player.position[0] + self.player.position[2]) / 2, (self.player.position[1] + self.player.position[3]) / 2)))
@@ -64,6 +66,10 @@ class GameManager(Singleton) :
         for wall in LevelManager.instance().walls:
             self.myDraw.rectangle((wall.x1, wall.y1, wall.x2, wall.y2),fill = (255,255,255,100))
 
+        #dust
+        if self.player.dustFlag:
+            self.background_src.paste(self.dust_src, (self.player.dustPos[0] - 15, self.player.dustPos[1]), self.dust_src)
+            
         #player
         self.background_src.paste(self.player_src, (drawPos[0] - 15, drawPos[1] - 15), self.player_src)
         

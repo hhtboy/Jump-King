@@ -12,6 +12,7 @@ class Player(Singleton):
 
         #캐릭터 위치
         self.playerSize = 30
+        # self.position = np.array([(240 - self.playerSize) /2, (220 - self.playerSize) , (240 + self.playerSize) / 2, (220) ], dtype=np.int64)
         self.position = np.array([(240 - self.playerSize) /2, (220 - self.playerSize) , (240 + self.playerSize) / 2, (220) ], dtype=np.int64)
 
         #캐릭터가 받는 힘의 방향
@@ -25,8 +26,13 @@ class Player(Singleton):
         sourceManager = SourceManager()
         self.anim_idle = sourceManager.importIdel()
         self.anim_jump = sourceManager.importJump()
+        self.anim_dust = sourceManager.importDust()
         self.anim_idleCount = 0
         self.anim_jumpCount = 0
+        self.anim_dustCount = 0
+        #dust animation flag
+        self.dustFlag = False
+        self.dustPos = self.center
         self.animState = self.anim_idle[0]
         self.stateList = ["idle", "charging", "jumping", "falling"]
 
@@ -36,6 +42,7 @@ class Player(Singleton):
         self.isJumping = False
         self.isWalking = False
 
+
         self.levelMap = LevelManager.instance().map
 
     #상태 변화
@@ -44,12 +51,18 @@ class Player(Singleton):
 
     #물리 변화
     def fixedUpdate(self):
+        if LevelManager.instance().level == 6 and self.position[3] < 70 and self.position[0] < 40:
+            LevelManager.gameOver()
         if self.position[1] < 5:
+            self.anim_dustCount = 0
+            self.dustFlag = False
             LevelManager.instance().levelUp()
             self.position[3] = 240  - (5 - self.position[1])
             self.position[1] = 240 - self.playerSize  - (5 - self.position[1])
 
         elif self.position[3] > 240:
+            self.anim_dustCount = 0
+            self.dustFlag = False
             LevelManager.instance().levelDown()
             self.position[1] = 5  
             self.position[3] = 5 + self.playerSize 
@@ -123,6 +136,8 @@ class Player(Singleton):
         if self.isJumping:
             return
         #print("jump!!")
+        self.dustFlag = True
+        self.dustPos = self.center
         self.direction[1] -= min(gauge * 5 + 10, 30)
         self.isJumping = True
         if self.facing == "left":
@@ -170,6 +185,14 @@ class Player(Singleton):
 
     #상태에 따른 애니메이션을 정의합니다.
     def defineAnim(self):
+        #dust
+        if self.dustFlag:
+            if self.anim_dustCount >= 4:
+                self.anim_dustCount = 0
+                self.dustFlag = False
+            else:
+                self.anim_dustCount = self.anim_dustCount + 1
+        
         if self.isJumping :
             if self.direction[1] <= 0 : self.state = "jumping"
             elif self.direction[1] > 0 : self.state = "falling"
@@ -266,8 +289,14 @@ class Player(Singleton):
                     y = self.position[1]
                     while self.levelMap[y][x] == 1:
                         y = y + 1
-                    while self.levelMap[y][x] == 0:
+                        if y == 241: # index 초과 방지
+                            y = 0
+                            break
+                    while self.levelMap[y][x] == 1:
                         x = x + 1
+                        if x == 241: # index 초과 방지
+                            x = 0
+                            break
                     resultX = x - 1 - self.position[2]
                     resultY = y - self.position[1]
                     return resultX, resultY
@@ -340,7 +369,7 @@ class Player(Singleton):
                 while self.levelMap[rightTop][x] == 1:
                     x = x - 1
                 if self.levelMap[self.position[3]][x] != 0:
-                    #print("니은 대칭")
+                    print("니은 대칭")
                     x = right
                     y = bottom
                     while self.levelMap[y][x] == 0:
