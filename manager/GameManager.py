@@ -19,6 +19,7 @@ class GameManager(Singleton) :
         self.inputController = Controller()
         self.joystick = Controller.joystick
         
+        #기초 이미지 소스 가져오기
         self.player_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/frog-fall.png")
         self.background_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/Background.png")
         self.background_src = self.background_src.resize((240,240))
@@ -42,7 +43,6 @@ class GameManager(Singleton) :
 
     def update(self):
         command = self.inputController.getControllerInput()
-
         self.player.update()
         self.player.move(command)
 
@@ -75,7 +75,7 @@ class GameManager(Singleton) :
         #player
         self.background_src.paste(self.player_src, (drawPos[0] - 15, drawPos[1] - 15), self.player_src)
 
-        #score
+        #score 이미지 폰트를 사용해서 점수를 표시합니다. 점수는 높이로 환산돼서 표시합니다.
         fontsize = 15
         fnt = ImageFont.truetype("DejaVuSans-BoldOblique.ttf", fontsize, encoding="UTF-8")
         score = round(((240 - self.player.position[1] -50) + (LevelManager.instance().level - 1) * 240) / 10, 1)
@@ -88,6 +88,7 @@ class GameManager(Singleton) :
         #좌표는 동그라미의 왼쪽 위, 오른쪽 아래 점 (x1, y1, x2, y2)
         self.joystick.disp.image(self.background_src)
 
+    #게임 시작시 호출합니다. 사용자가 키 입력을 하면 메인 루프가 실행됩니다.
     def gameStart(self):
         self.joystick.disp.image(self.starting_src)
         count = 0
@@ -106,20 +107,18 @@ class GameManager(Singleton) :
 
             if flag:
                 self.background_src.paste(self.background)
-                
             else:
                 self.myDraw.text((120-tw/2, 120-int(fnt.size/2)), text, font=fnt, fill="red")
                 self.myDraw = ImageDraw.Draw(self.background_src)
 
             self.joystick.disp.image(self.background_src)
 
+            #키 입력을 탐지합니다
             input = self.inputController.getControllerInput()
             if input["a_pressed"]:
                 break
 
         sceneChange(self)
-
-
         
         
     def gameEnding(self):
@@ -146,6 +145,7 @@ class GameManager(Singleton) :
 
         exit(0)
 
+#게임 시작 시, 종료 시 씬 바꾸기
 def sceneChange(self):
     draw = ImageDraw.Draw(self.background_src)
     for i in range (1, 21):

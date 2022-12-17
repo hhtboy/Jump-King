@@ -1,5 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
+#애니메이션을 위한 이미지들을 한번에 import 합니다.
+#시간이 오래 걸리는 작업이기 때문에 매 루프에서 하는 게 아닌 시작과 동시에 한번만 호출됩니다.
 class SourceManager:
     def __init__(self):
         self.idle_src = ["idle1.png", "idle2.png","idle3.png","idle4.png","idle5.png","idle6.png","idle7.png","idle8.png"]

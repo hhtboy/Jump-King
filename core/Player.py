@@ -430,17 +430,6 @@ class Player(Singleton):
                             resultX = 0
                             resultY = top - self.position[1] 
                 else:
-                    # if self.levelMap[self.position[1]][left] == 0:
-                    #     #대칭 ㄱ
-                    #     #print("대칭 ㄱ")
-                    #     self.help()
-                    #     resultX = left - self.position[0]
-                    #     y = self.position[1]
-                    #     while self.levelMap[y][left] == 1:
-                    #         y = y + 1
-                    #     resultY = y - self.position[1]
-                    #     return resultX, resultY
-                    
                     #else:
                     #왼쪽 일자 벽
                     #print("왼쪽 일자 벽")
