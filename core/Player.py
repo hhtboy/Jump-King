@@ -12,7 +12,6 @@ class Player(Singleton):
 
         #캐릭터 위치
         self.playerSize = 30
-        # self.position = np.array([(240 - self.playerSize) /2, (220 - self.playerSize) , (240 + self.playerSize) / 2, (220) ], dtype=np.int64)
         self.position = np.array([(240 - self.playerSize) /2, (220 - self.playerSize) , (240 + self.playerSize) / 2, (220) ], dtype=np.int64)
 
         #캐릭터가 받는 힘의 방향

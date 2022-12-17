@@ -1,7 +1,7 @@
 from mapObject.Wall import Wall
 from core.Singleton import Singleton
 from mapObject.Map import Map
-from GameManager import GameManager
+import time
 
 class LevelManager(Singleton):
 
@@ -65,4 +65,7 @@ class LevelManager(Singleton):
 
     def gameOver():
         print("gameOver")
+
+        from manager.GameManager import GameManager
+        GameManager.instance().gameEnding()
         GameManager.instance().gameOver = True
