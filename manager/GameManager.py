@@ -21,8 +21,7 @@ class GameManager(Singleton) :
         
         #기초 이미지 소스 가져오기
         self.player_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/frog-fall.png")
-        self.background_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/Background.png")
-        self.background_src = self.background_src.resize((240,240))
+        self.background_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/level1.png").resize((240,240))
         self.background = self.background_src.copy()
         self.wall_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/small-platform.png")
         self.starting_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/small-platform.png")
@@ -61,12 +60,7 @@ class GameManager(Singleton) :
         drawPos = list(map((int), ((self.player.position[0] + self.player.position[2]) / 2, (self.player.position[1] + self.player.position[3]) / 2)))
 
         #background
-        self.background_src.paste(self.background)
-
-        #wall
-        #self.background_src.paste(self.wall_src, (50, 100), self.wall_src)
-        for wall in LevelManager.instance().walls:
-            self.myDraw.rectangle((wall.x1, wall.y1, wall.x2, wall.y2),fill = (255,255,255,100))
+        self.background_src.paste(LevelManager.instance().get_background())
 
         #dust
         if self.player.dustFlag:

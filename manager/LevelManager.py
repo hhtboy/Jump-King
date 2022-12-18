@@ -1,6 +1,7 @@
 from mapObject.Wall import Wall
 from core.Singleton import Singleton
 from mapObject.Map import Map
+from PIL import Image
 import time
 
 class LevelManager(Singleton):
@@ -12,10 +13,19 @@ class LevelManager(Singleton):
     level_5 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(70, 100, 180, 200), Wall(165,195, 170, 190), Wall(50, 80, 110, 130), Wall(200, 230, 50, 70) ]
     level_6 = [Wall(0,10,0,240), Wall(230, 240, 0, 240), Wall(10, 90, 195, 215), Wall(185, 230, 130, 150), Wall(10, 100, 60, 100)]
 
+
+
     def __init__(self):
         self.map = Map().map
         self.level = 1
         self.walls = self.level_1
+
+        self.level_1_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/level1.png").resize((240,240))
+        self.level_2_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/level2.png").resize((240,240))
+        self.level_3_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/level3.png").resize((240,240))
+        self.level_4_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/level4.png").resize((240,240))
+        self.level_5_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/level5.png").resize((240,240))
+        self.level_6_src = Image.open(r"/home/kau-esw/Documents/github/Jump-King/assets/level6.png").resize((240,240))
 
     def changeLevel(self, newLevel):
         self.clearMap()
@@ -62,6 +72,22 @@ class LevelManager(Singleton):
                     for x in range(wall.x1, wall.x2 + 1):
                         for y in range(wall.y1, wall.y2 + 1):
                             self.map[y][x] = 0
+
+                            
+    def get_background(self):
+        if self.level == 1:
+            return self.level_1_src
+        elif self.level == 2:
+            return self.level_2_src
+        elif self.level == 3:
+            return self.level_3_src
+        elif self.level == 4:
+            return self.level_4_src
+        elif self.level == 5:
+            return self.level_5_src
+        else:
+            return self.level_6_src
+            
 
     def gameOver():
         print("gameOver")
